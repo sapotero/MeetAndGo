@@ -36,7 +36,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="24dp"
-        android:onClick="toMain"
         android:text="Логин"/>
 
     <Button
@@ -47,7 +46,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_margin="24dp"
-        android:onClick="toRegistration"
         android:text="РЕГИСТРАЦИЯ"/>
 
     <TextView
