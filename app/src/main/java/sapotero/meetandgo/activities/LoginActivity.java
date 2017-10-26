@@ -1,4 +1,4 @@
-package sapotero.meetandgo;
+package sapotero.meetandgo.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import sapotero.meetandgo.R;
 
 public class LoginActivity extends AppCompatActivity {
 
