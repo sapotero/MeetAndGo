@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -21,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     ButterKnife.bind(this);
   }
 
+  @OnClick(R.id.login)
   public void toMain(View v){
 
     Intent intent = new Intent(this, MainActivity.class);
@@ -31,10 +33,10 @@ public class LoginActivity extends AppCompatActivity {
     intent.putExtras(bundle);
 
     startActivity(intent);
-    finish();
 
   }
 
+  @OnClick(R.id.registration)
   public void toRegistration(View v){
 
     Intent intent = new Intent(this, RegistrationActivity.class);

@@ -2,15 +2,15 @@ package sapotero.meetandgo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-  @BindView(R.id.email) EditText email;
-  @BindView(R.id.password) EditText password;
+  @BindView(R.id.email)    TextView email;
+  @BindView(R.id.password) TextView password;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
