@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sapotero.meetandgo.activities.MainActivity">
+    tools:context="sapotero.meetandgo.activities.MainActivity"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/email"
@@ -26,5 +26,21 @@
         android:padding="16dp"
         android:text="password"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"/>
+    <Button
+        android:id="@+id/updateUserInfo"
+        android:text="add one user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/addUsers"
+        android:text="add many users"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/userRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
