@@ -5,31 +5,38 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class User implements Serializable{
 
   @SerializedName("id")
   @Expose
-  private String id;
-
+  private Integer id;
   @SerializedName("email")
   @Expose
   private String email;
-
   @SerializedName("password")
   @Expose
   private String password;
+  @SerializedName("phone")
+  @Expose
+  private String phone;
+  @SerializedName("info")
+  @Expose
+  private String info;
+  @SerializedName("created_at")
+  @Expose
+  private String createdAt;
+  @SerializedName("updated_at")
+  @Expose
+  private String updatedAt;
+  @SerializedName("url")
+  @Expose
+  private String url;
 
-  public User(String id, String email, String password) {
-    this.id = id;
-    this.email = email;
-    this.password = password;
-  }
-
-  public String getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -49,8 +56,43 @@ public class User implements Serializable {
     this.password = password;
   }
 
-  @Override
-  public String toString() {
-    return String.format( "[%s] %s : %s", id, email, password );
+  public String getPhone() {
+    return phone;
+  }
+
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
+
+  public String getInfo() {
+    return info;
+  }
+
+  public void setInfo(String info) {
+    this.info = info;
+  }
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 }
