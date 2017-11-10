@@ -10,17 +10,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import sapotero.meetandgo.R;
-import sapotero.meetandgo.model.User;
+import sapotero.meetandgo.model.UserApi;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>  {
 
-  private ArrayList<User> users;
+  private ArrayList<UserApi> users;
 
   public UserAdapter() {
     users = new ArrayList<>();
   }
 
-  public void add(User user){
+  public void add(UserApi user){
     users.add(user);
     notifyDataSetChanged();
   }
@@ -38,7 +38,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
   @Override
   public void onBindViewHolder(UserViewHolder viewHolder, int position) {
-    final User user = users.get(position);
+    final UserApi user = users.get(position);
 
     viewHolder.email.setText( user.getEmail() );
     viewHolder.password.setText( user.getPassword() );

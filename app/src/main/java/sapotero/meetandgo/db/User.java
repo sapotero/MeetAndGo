@@ -6,7 +6,7 @@ import io.requery.Generated;
 import io.requery.Key;
 
 @Entity
-public abstract class User {
+abstract class User {
 
   @Key
   @Generated

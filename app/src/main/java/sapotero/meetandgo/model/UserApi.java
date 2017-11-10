@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class UserApi implements Serializable{
 
   @SerializedName("id")
   @Expose
@@ -32,12 +32,15 @@ public class User implements Serializable{
   @Expose
   private String url;
 
-  public Integer getId() {
-    return id;
+  public UserApi(String email, String password, String phone, String info) {
+    this.email = email;
+    this.password = password;
+    this.phone = phone;
+    this.info = info;
   }
 
-  public void setId(Integer id) {
-    this.id = id;
+  public Integer getId() {
+    return id;
   }
 
   public String getEmail() {

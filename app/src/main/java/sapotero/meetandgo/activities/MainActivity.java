@@ -8,11 +8,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.requery.Persistable;
+import io.requery.query.Tuple;
+import io.requery.rx.SingleEntityStore;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -22,7 +26,9 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import sapotero.meetandgo.R;
 import sapotero.meetandgo.adapter.UserAdapter;
-import sapotero.meetandgo.model.User;
+import sapotero.meetandgo.application.Application;
+import sapotero.meetandgo.db.UserEntity;
+import sapotero.meetandgo.model.UserApi;
 import sapotero.meetandgo.retrofit.UserService;
 import timber.log.Timber;
 
@@ -33,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
   @BindView(R.id.userRecycleView) RecyclerView userRecycleView;
 
   private UserAdapter adapter;
+  private SingleEntityStore<Persistable> data;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,51 @@ public class MainActivity extends AppCompatActivity {
 
     setUserAdapter();
 
+    initDb();
+
+
+  }
+
+  private void initDb() {
+    data = ((Application) getApplication()).getData();
+
+    data
+      .select(UserEntity.EMAIL,UserEntity.PASSWORD, UserEntity.PHONE, UserEntity.INFO)
+      .from(UserEntity.class)
+      .get()
+      .toObservable()
+      .toList()
+      .subscribeOn(Schedulers.computation())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe(
+
+        new Action1<List<Tuple>>() {
+          @Override
+          public void call(List<Tuple> tuples) {
+            Timber.e("size: %s", tuples.size());
+
+            for (Tuple tuple: tuples) {
+              Timber.e("tuple: %s", tuple.toString());
+
+              adapter.add(
+                new UserApi(
+                  tuple.get(0) == null ? "-" : tuple.get(0).toString(),
+                  tuple.get(1) == null ? "-" : tuple.get(1).toString(),
+                  tuple.get(2) == null ? "-" : tuple.get(2).toString(),
+                  tuple.get(3) == null ? "-" : tuple.get(3).toString()
+                ));
+            }
+
+          }
+        },
+
+        new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            Timber.e(throwable);
+          }
+        }
+      );
   }
 
   @OnClick(R.id.updateUserInfo)
@@ -65,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
       .subscribeOn(Schedulers.computation())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe(
-        new Action1<User>() {
+        new Action1<UserApi>() {
           @Override
-          public void call(User user) {
+          public void call(UserApi user) {
             Toast.makeText(MainActivity.this, user.toString(), Toast.LENGTH_SHORT).show();
             adapter.add(user);
           }
@@ -83,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
   @OnClick(R.id.addUsers)
   public void addUsers(){
+
     OkHttpClient okhttp = new OkHttpClient.Builder()
       .readTimeout(60, TimeUnit.SECONDS)
       .connectTimeout(10, TimeUnit.SECONDS)
@@ -102,13 +155,40 @@ public class MainActivity extends AppCompatActivity {
       .subscribeOn(Schedulers.computation())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe(
-        new Action1<ArrayList<User>>() {
+        new Action1<ArrayList<UserApi>>() {
           @Override
-          public void call(ArrayList<User> userArrayList) {
+          public void call(ArrayList<UserApi> userArrayList) {
 
-            for (User user: userArrayList) {
-              Toast.makeText(MainActivity.this, user.toString(), Toast.LENGTH_SHORT).show();
+            for (final UserApi user: userArrayList) {
+//              Toast.makeText(MainActivity.this, user.toString(), Toast.LENGTH_SHORT).show();
               adapter.add(user);
+
+              UserEntity newUser = new UserEntity();
+              newUser.setEmail( user.getEmail() );
+              newUser.setInfo( user.getInfo() );
+              newUser.setPassword( user.getPassword() );
+              newUser.setPhone( user.getPhone() );
+
+              SingleEntityStore<Persistable> data = ((Application) getApplication()).getData();
+              data
+                .upsert(newUser)
+                .toObservable()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                  new Action1<UserEntity>() {
+                    @Override
+                    public void call(UserEntity userEntity) {
+                      Timber.d( "new user inserted - %s", userEntity.getId() );
+                    }
+                  }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                      Timber.e(throwable);
+                    }
+                  }
+                );
+
             }
           }
         },
