@@ -28,6 +28,8 @@
         </activity>
         <activity android:name=".activities.RegistrationActivity">
         </activity>
+        <activity android:name=".activities.SharedActivity">
+        </activity>
     </application>
 
 </manifest>
