@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context="sapotero.meetandgo.activities.SharedActivity">
 
-    <TextView
-        android:id="@+id/text"
+    <EditText
+        android:id="@+id/field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"

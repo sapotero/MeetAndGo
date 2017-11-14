@@ -17,10 +17,11 @@ import sapotero.meetandgo.R;
 
 public class SharedActivity extends AppCompatActivity {
 
-  @BindView(R.id.text) EditText field;
+  private RxSharedPreferences rxPreferences;
+
+  @BindView(R.id.field) EditText field;
   @BindView(R.id.load) Button load;
   @BindView(R.id.save) Button save;
-  private RxSharedPreferences rxPreferences;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
