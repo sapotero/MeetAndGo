@@ -40,6 +40,15 @@ public class LoginActivity extends AppCompatActivity {
   @OnClick(R.id.registration)
   public void toRegistration(View v){
 
+    Intent intent = new Intent(this, RegistrationActivity.class);
+    startActivity(intent);
+    finish();
+
+  }
+
+  @OnClick(R.id.shared)
+  public void toShared(View v){
+
     Intent intent = new Intent(this, SharedActivity.class);
     startActivity(intent);
     finish();
