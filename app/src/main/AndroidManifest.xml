@@ -33,6 +33,12 @@
         </activity>
         <activity android:name=".activities.UserInfoActivity">
         </activity>
+
+        <service
+            android:name=".service.SimpleService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>
