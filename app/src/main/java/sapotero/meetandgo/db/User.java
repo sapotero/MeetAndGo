@@ -12,9 +12,14 @@ abstract class User {
   @Generated
   int id;
 
+  Integer uid;
   String email;
   String password;
   String info;
   String phone;
   String url;
 }
+
+
+
+

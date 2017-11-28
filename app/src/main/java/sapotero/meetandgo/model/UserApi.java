@@ -32,11 +32,11 @@ public class UserApi implements Serializable{
   @Expose
   private String url;
 
-  public UserApi(String email, String password, String phone, String info) {
+  public UserApi(String email, String password, String phone, Integer id) {
     this.email = email;
     this.password = password;
     this.phone = phone;
-    this.info = info;
+    this.id = id;
   }
 
   public Integer getId() {

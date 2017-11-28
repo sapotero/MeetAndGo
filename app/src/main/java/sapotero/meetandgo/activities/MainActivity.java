@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     data = ((Application) getApplication()).getData();
 
     data
-      .select(UserEntity.EMAIL,UserEntity.PASSWORD, UserEntity.PHONE, UserEntity.INFO)
+      .select(UserEntity.EMAIL,UserEntity.PASSWORD, UserEntity.PHONE, UserEntity.ID)
       .from(UserEntity.class)
       .get()
       .toObservable()
@@ -70,23 +70,17 @@ public class MainActivity extends AppCompatActivity {
         new Action1<List<Tuple>>() {
           @Override
           public void call(List<Tuple> tuples) {
-            Timber.e("size: %s", tuples.size());
-
             for (Tuple tuple: tuples) {
-              Timber.e("tuple: %s", tuple.toString());
-
               adapter.add(
                 new UserApi(
                   tuple.get(0) == null ? "-" : tuple.get(0).toString(),
                   tuple.get(1) == null ? "-" : tuple.get(1).toString(),
                   tuple.get(2) == null ? "-" : tuple.get(2).toString(),
-                  tuple.get(3) == null ? "-" : tuple.get(3).toString()
+                  tuple.get(3) == null ? 0 : Integer.valueOf( tuple.get(3).toString() )
                 ));
             }
-
           }
         },
-
         new Action1<Throwable>() {
           @Override
           public void call(Throwable throwable) {
@@ -107,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
       .client(okhttp)
       .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
       .addConverterFactory(GsonConverterFactory.create())
-      .baseUrl( "http://192.168.150.157:3000/" )
+      .baseUrl( "http://192.168.160.245:3000/" )
       .build();
 
     UserService userService = retrofit.create(UserService.class);
@@ -145,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
       .client(okhttp)
       .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
       .addConverterFactory(GsonConverterFactory.create())
-      .baseUrl( "http://192.168.150.157:3000/" )
+      .baseUrl( "http://192.168.160.245:3000/" )
       .build();
 
     UserService userService = retrofit.create(UserService.class);
@@ -168,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
               newUser.setInfo( user.getInfo() );
               newUser.setPassword( user.getPassword() );
               newUser.setPhone( user.getPhone() );
+              newUser.setUid( user.getId() );
+              newUser.setUrl( user.getUrl() );
+
 
               SingleEntityStore<Persistable> data = ((Application) getApplication()).getData();
               data
@@ -202,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setUserAdapter() {
-    adapter = new UserAdapter();
+    adapter = new UserAdapter(this);
     userRecycleView.setLayoutManager( new LinearLayoutManager(this));
     userRecycleView.setAdapter(adapter);
   }
