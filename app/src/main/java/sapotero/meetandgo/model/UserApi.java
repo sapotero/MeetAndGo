@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UserApi implements Serializable{
 
@@ -28,9 +29,42 @@ public class UserApi implements Serializable{
   @SerializedName("updated_at")
   @Expose
   private String updatedAt;
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
   @SerializedName("url")
   @Expose
   private String url;
+
+
+
+
+
+
+  @SerializedName("comments")
+  @Expose
+  private List<Comment> commentList;
+
+  public List<Comment> getCommentList() {
+    return commentList;
+  }
+
+  public void setCommentList(List<Comment> commentList) {
+    this.commentList = commentList;
+  }
+
+  public UserApi(Integer id, String email, String password, String phone, String info, String createdAt, String updatedAt, String url, List<Comment> commentList) {
+    this.id = id;
+    this.email = email;
+    this.password = password;
+    this.phone = phone;
+    this.info = info;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.url = url;
+    this.commentList = commentList;
+  }
 
   public UserApi(String email, String password, String phone, Integer id) {
     this.email = email;
