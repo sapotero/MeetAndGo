@@ -48,7 +48,7 @@ public class MapActivity extends AppCompatActivity {
     Configuration.getInstance().setOsmdroidBasePath(getStorage());
 
     map = (MapView) findViewById(R.id.map);
-    map.setTileSource(TileSourceFactory.MAPNIK);
+    map.setTileSource(TileSourceFactory.USGS_SAT);
     map.setTilesScaledToDpi(true);
 
 

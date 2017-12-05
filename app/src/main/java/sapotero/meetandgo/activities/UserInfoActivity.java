@@ -71,7 +71,7 @@ public class UserInfoActivity extends AppCompatActivity {
     createAdapter();
 
     Observable
-      .interval(1000, 5000, TimeUnit.MILLISECONDS)
+      .interval(0, 5000, TimeUnit.MILLISECONDS)
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe(new Action1<Long>() {
