@@ -1,11 +1,15 @@
 package sapotero.meetandgo.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.f2prateek.rx.preferences.RxSharedPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +50,19 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
+
+    Bundle bundle = getIntent().getExtras();
+    String name  = "default_login";
+    String pass  = "default_password";
+
+    if(bundle != null){
+      name = bundle.getString("email");
+      pass = bundle.getString("password");
+
+      SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+      RxSharedPreferences rxPreferences = RxSharedPreferences.create(preferences);
+      rxPreferences.getString("current_user").set(name);
+    }
 
     setUserAdapter();
 
@@ -101,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
       .client(okhttp)
       .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
       .addConverterFactory(GsonConverterFactory.create())
-      .baseUrl( "http://192.168.160.245:3000/" )
+      .baseUrl( "http://192.168.150.157:3000/" )
       .build();
 
     UserService userService = retrofit.create(UserService.class);
@@ -139,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
       .client(okhttp)
       .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
       .addConverterFactory(GsonConverterFactory.create())
-      .baseUrl( "http://192.168.160.245:3000/" )
+      .baseUrl( "http://192.168.150.157:3000/" )
       .build();
 
     UserService userService = retrofit.create(UserService.class);

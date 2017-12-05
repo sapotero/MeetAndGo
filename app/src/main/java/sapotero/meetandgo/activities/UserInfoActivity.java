@@ -1,24 +1,37 @@
 package sapotero.meetandgo.activities;
 
 import android.app.Notification;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.f2prateek.rx.preferences.RxSharedPreferences;
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -27,9 +40,10 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import sapotero.meetandgo.R;
 import sapotero.meetandgo.adapter.CommentAdapter;
-import sapotero.meetandgo.adapter.UserAdapter;
 import sapotero.meetandgo.model.Comment;
 import sapotero.meetandgo.model.UserApi;
+import sapotero.meetandgo.model.wrapper.CommentWrapper;
+import sapotero.meetandgo.retrofit.CommentService;
 import sapotero.meetandgo.retrofit.UserService;
 import timber.log.Timber;
 
@@ -38,6 +52,7 @@ public class UserInfoActivity extends AppCompatActivity {
   private int id = 4;
 
   @BindView(R.id.commentList) RecyclerView commentList;
+  @BindView(R.id.commentField) EditText commentField;
   private CommentAdapter adapter;
 
   @Override
@@ -52,29 +67,21 @@ public class UserInfoActivity extends AppCompatActivity {
       id = bundle.getInt("id");
     }
 
+    createAdapter();
 
+    getUserInfo();
 
+  }
 
-
+  private void createAdapter() {
     adapter = new CommentAdapter(this);
     commentList.setLayoutManager( new LinearLayoutManager(this));
     commentList.setAdapter(adapter);
+  }
 
-
-
-
-
-    OkHttpClient okhttp = new OkHttpClient.Builder()
-      .readTimeout(60, TimeUnit.SECONDS)
-      .connectTimeout(10, TimeUnit.SECONDS)
-      .build();
-
-    Retrofit retrofit = new Retrofit.Builder()
-      .client(okhttp)
-      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-      .addConverterFactory(GsonConverterFactory.create())
-      .baseUrl( "http://192.168.160.245:3000/" )
-      .build();
+  private void getUserInfo() {
+    adapter.clear();
+    Retrofit retrofit = getRetrofit();
 
     UserService userService = retrofit.create(UserService.class);
 
@@ -115,13 +122,35 @@ public class UserInfoActivity extends AppCompatActivity {
           }
         }
       );
-
-
-
-
-
   }
 
+  @NonNull
+  private Retrofit getRetrofit() {
+    OkHttpClient okhttp = new OkHttpClient.Builder()
+      .readTimeout(60, TimeUnit.SECONDS)
+      .connectTimeout(10, TimeUnit.SECONDS)
+      .addInterceptor(new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+          Request request = chain.request();
+          Log.e(getClass().getName(), request.method() + " " + request.url());
+          RequestBody rb = request.body();
+          Buffer buffer = new Buffer();
+          if (rb != null)
+            rb.writeTo(buffer);
+          Timber.e( getClass().getName(), "Payload- " + buffer.readUtf8());
+          return chain.proceed(request);
+        }
+      })
+      .build();
+
+    return new Retrofit.Builder()
+      .client(okhttp)
+      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+      .addConverterFactory(GsonConverterFactory.create())
+      .baseUrl( "http://192.168.150.157:3000/" )
+      .build();
+  }
 
   private void showComment(String date, String body){
 
@@ -168,5 +197,59 @@ public class UserInfoActivity extends AppCompatActivity {
 
   }
 
+  @OnClick(R.id.add_comment_button)
+  public void addComment(View v){
+    Retrofit retrofit = getRetrofit();
+
+    CommentService userService = retrofit.create(CommentService.class);
+
+    String json_m = new Gson().toJson(
+      new CommentWrapper(
+        new Comment(
+
+          String.format("%s :%s", getCurrentUser(), commentField.getText().toString()),
+          null,
+          String.valueOf(id) )
+      ), CommentWrapper.class
+    );
+
+    Timber.e("json: %s", json_m);
+
+    RequestBody json = RequestBody.create(
+      MediaType.parse("application/json"),
+      json_m
+    );
+
+    userService
+      .addComment( json )
+      .subscribeOn(Schedulers.computation())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe(
+        new Action1<Comment>() {
+          @Override
+          public void call(Comment comment) {
+
+            Toast.makeText(UserInfoActivity.this, comment.toString(), Toast.LENGTH_SHORT).show();
+            adapter.add(comment);
+            commentList.smoothScrollToPosition(adapter.getItemCount() - 1);
+
+
+          }
+        },
+        new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            Timber.e(throwable);
+          }
+        }
+      );
+
+  }
+
+  private String getCurrentUser(){
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    RxSharedPreferences rxPreferences = RxSharedPreferences.create(preferences);
+    return rxPreferences.getString("current_user", "аноним").get();
+  }
 
 }

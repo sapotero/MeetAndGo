@@ -26,6 +26,8 @@ import java.util.ArrayList;
 
 import sapotero.meetandgo.R;
 
+import static org.osmdroid.tileprovider.util.StorageUtils.getStorage;
+
 public class MapActivity extends AppCompatActivity {
 
   private static final int MENU_ZOOMIN_ID = Menu.FIRST;
@@ -41,10 +43,12 @@ public class MapActivity extends AppCompatActivity {
     Context context = getApplicationContext();
     setContentView(R.layout.activity_map);
     //important! set your user agent to prevent getting banned from the osm servers
-    Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+//    Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+    Configuration.getInstance().setUserAgentValue(getPackageName());
+    Configuration.getInstance().setOsmdroidBasePath(getStorage());
 
     map = (MapView) findViewById(R.id.map);
-    map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+    map.setTileSource(TileSourceFactory.MAPNIK);
     map.setTilesScaledToDpi(true);
 
 

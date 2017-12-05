@@ -13,9 +13,23 @@ public class Comment {
     @Expose
     private String date;
 
-    public Comment(String body, String date) {
+    @SerializedName("user_id")
+    @Expose
+    private String userId;
+
+    public Comment(String body, String date, String userId) {
         this.body = body;
         this.date = date;
+        this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public Comment setUserId(String userId) {
+        this.userId = userId;
+        return this;
     }
 
     public String getBody() {
