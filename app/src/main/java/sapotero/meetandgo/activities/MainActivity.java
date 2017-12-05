@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     data = ((Application) getApplication()).getData();
 
     data
-      .select(UserEntity.EMAIL,UserEntity.PASSWORD, UserEntity.PHONE, UserEntity.ID)
+      .select(UserEntity.EMAIL,UserEntity.PASSWORD, UserEntity.PHONE, UserEntity.UID)
       .from(UserEntity.class)
       .get()
       .toObservable()

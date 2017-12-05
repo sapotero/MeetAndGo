@@ -35,6 +35,7 @@ import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -69,7 +70,15 @@ public class UserInfoActivity extends AppCompatActivity {
 
     createAdapter();
 
-    getUserInfo();
+    Observable
+      .interval(1000, 5000, TimeUnit.MILLISECONDS)
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe(new Action1<Long>() {
+        public void call(Long aLong) {
+          getUserInfo();
+        }
+      });
 
   }
 
@@ -80,7 +89,7 @@ public class UserInfoActivity extends AppCompatActivity {
   }
 
   private void getUserInfo() {
-    adapter.clear();
+
     Retrofit retrofit = getRetrofit();
 
     UserService userService = retrofit.create(UserService.class);
@@ -94,25 +103,16 @@ public class UserInfoActivity extends AppCompatActivity {
           @Override
           public void call(UserApi user) {
 
-            Toast.makeText(UserInfoActivity.this, user.toString(), Toast.LENGTH_SHORT).show();
 
             if ( user.getCommentList().isEmpty() ){
               Timber.d("no comments");
             } else {
-
               for (Comment comment: user.getCommentList()) {
                 Timber.d("%s - %s", comment.getDate(), comment.getBody());
                 adapter.add(comment);
-
-                showComment( comment.getDate(), comment.getBody() );
-
-
-
+                commentList.smoothScrollToPosition(adapter.getItemCount() - 1);
               }
-
             }
-
-
           }
         },
         new Action1<Throwable>() {

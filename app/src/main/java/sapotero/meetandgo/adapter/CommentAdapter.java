@@ -9,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import sapotero.meetandgo.R;
 import sapotero.meetandgo.model.Comment;
+import timber.log.Timber;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder>  {
 
   private final Context context;
   private ArrayList<Comment> comments;
+  private HashMap<String, Comment> hash = new HashMap<>();
 
   public CommentAdapter(Context context) {
     this.context = context;
@@ -24,8 +27,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
   }
 
   public void add(Comment comment){
-    comments.add(comment);
-    notifyDataSetChanged();
+    if (!hash.containsKey(comment.hash())){
+      Timber.e("hash %s", comment.hash());
+      comments.add(comment);
+      hash.put(comment.hash(), comment);
+      notifyDataSetChanged();
+    }
   }
 
   public void clear(){

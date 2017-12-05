@@ -47,4 +47,8 @@ public class Comment {
     public void setDate(String date) {
         this.date = date;
     }
+
+    public String hash() {
+        return getDate()+getUserId()+getBody()+getDate();
+    }
 }
