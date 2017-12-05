@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
   @OnClick(R.id.shared)
   public void toShared(View v){
 
-    Intent intent = new Intent(this, SharedActivity.class);
+    Intent intent = new Intent(this, MapActivity.class);
     startActivity(intent);
     finish();
 
